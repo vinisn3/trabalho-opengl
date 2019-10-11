@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
    	glutInit(&argc, argv);
    	glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowSize(800,600);
-   	window = glutCreateWindow("Círculo");
+   	window = glutCreateWindow("Circunferencia");
 	glutDisplayFunc(display);
 	setup();
    	glutMainLoop();
@@ -48,11 +48,46 @@ int main(int argc, char *argv[]){
 
 void drawCircle(Ponto pC, int r){
 	
-	int x = r, y = 0, k = 0;
+	int x = 0, y = r, d = 1 - r;
+
+	glPointSize(3);
+	glColor3d(color[0], color[1], color[2]);
+	glBegin(GL_POINTS);
+		glVertex2i(pC.x + x, pC.y + y);	
+		glVertex2i(pC.x + y, pC.y + x);
+		glVertex2i(pC.x - y, pC.y + x);
+		glVertex2i(pC.x - x, pC.y + y);
+		glVertex2i(pC.x - x, pC.y - y);
+		glVertex2i(pC.x - y, pC.y - x);
+		glVertex2i(pC.x + y, pC.y - x);
+		glVertex2i(pC.x + x, pC.y - y);
+	glEnd();
 	
-	while(x >= y)
+	while(y > x)
 	{
+		
+		/* 	
+			* d menor ou igual a zero -> pixel 'e' (acima da curva) é o escolhido
+			* ponto médio abaixo da curva
+			* ponto movimenta apenas no eixo x
+		*/ 
+		
+		if(d <= 0) 
+			d += 2 * x + 3; // Incremento para a variável de decisão caso seja escolhido pixel 'e'
 	
+		/* 	
+			* d menor ou igual a zero -> pixel 'se' (abaixo da curva) é o escolhido
+			* ponto médio acima da curva
+			* ponto movimenta nos eixos x e y
+		*/ 
+		else
+		{	
+			d += 2 * (x - y) + 5; // Incremento para a variável de decisão caso seja escolhido pixel 'se'
+			y--;
+		}
+
+		x++;
+
 		glPointSize(3);
 		glColor3d(color[0], color[1], color[2]);
 		glBegin(GL_POINTS);
@@ -64,19 +99,7 @@ void drawCircle(Ponto pC, int r){
 			glVertex2i(pC.x - y, pC.y - x);
 			glVertex2i(pC.x + y, pC.y - x);
 			glVertex2i(pC.x + x, pC.y - y);
-		glEnd();
-		
-		if(k <= 0)
-		{
-			y++;	
-			k += (2 * y) + 1;
-		}
-		
-		if(k > 0)
-		{	
-			x--;
-			k -= (2 * x) + 1;
-		}	
+		glEnd();	
 
 	}
 }
